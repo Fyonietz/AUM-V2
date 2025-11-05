@@ -1,0 +1,12 @@
+Document_Root=public
+Server_Port=9001
+Number_Threads=64
+Keep_Alive=yes
+Routes_Type=debug
+
+Database_Type=mysql 
+MySQL_Host=localhost
+MySQL_User=aum
+MySQL_Password=ggmu
+MySQL_Database=aum_db
+MySQL_Port=3306

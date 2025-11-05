@@ -1,0 +1,6 @@
+build/
+plan/
+.vscode/
+1
+.cache/
+*.csv

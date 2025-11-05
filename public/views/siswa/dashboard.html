@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/Fyonietz/TEFA-ASSETS/refs/heads/main/logoRounded.ico">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Mobile Container -->
+    <div class="max-w-md mx-auto bg-white min-h-screen relative">
+        <!-- Main Content -->
+        <div class="overflow-y-auto pb-20">
+            <!-- Beranda Tab -->
+            <div id="beranda" class="tab-content active">
+                <div class="p-4">
+                    <!-- Header -->
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold mb-1">Selamat Datang!</h1>
+                        <p class="text-sm text-gray-600" id="welcome">Senin, 27 Oktober 2025</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 gap-4 mb-6">
+                        <div 
+                            class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 cursor-pointer hover:bg-blue-50 transition w-full"
+                            onclick="window.location.href='/dashboard/siswa/aum'"
+                        >
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-1">Bimbingan Konseling</p>
+                            <p class="text-lg font-semibold">AUM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Akun Tab -->
+            <div id="akun" class="tab-content">
+                <div class="p-4">
+                    <!-- Profile Header -->
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-6 mb-6">
+                        <div class="flex items-center gap-4 mb-4">
+                            <img
+                                src="https://raw.githubusercontent.com/Fyonietz/TEFA-ASSETS/refs/heads/main/logoRounded.ico"
+                                alt="Profile"
+                                class="w-20 h-20 rounded-full object-cover"
+                                onerror="this.src='https://via.placeholder.com/80'"
+                            />
+                            <div>
+                                <h2 class="text-xl font-semibold mb-1" id="welcome2">Ahmad Rizki</h2>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Menu Items -->
+                    <div class="space-y-2">
+
+                        <!-- Change Password Button -->
+                        <div onclick="togglePasswordSection()" class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm">Ubah Password</span>
+                                </div>
+                                <svg id="chevron-icon" class="w-5 h-5 text-gray-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Password Change Form (Hidden by default) -->
+                        <div id="password-section" class="hidden bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-lg shadow-sm p-6 space-y-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-800">Ubah Password</h3>
+                                    <p class="text-xs text-gray-600">Masukkan password lama dan baru</p>
+                                </div>
+                            </div>
+
+                            <!-- Alert Message -->
+                            <div id="alert-message" class="hidden p-3 rounded-lg">
+                                <div class="flex items-start gap-2">
+                                    <svg id="alert-icon" class="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"></svg>
+                                    <p id="alert-text" class="text-sm"></p>
+                                </div>
+                            </div>
+
+                            <!-- Old Password -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Password Lama</label>
+                                <div class="relative">
+                                    <input 
+                                        type="password" 
+                                        id="old-password"
+                                        placeholder="Masukkan password lama"
+                                        class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                    />
+                                    <button 
+                                        type="button"
+                                        onclick="togglePasswordVisibility('old-password')"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- New Password -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
+                                <div class="relative">
+                                    <input 
+                                        type="password" 
+                                        id="new-password"
+                                        placeholder="Masukkan password baru"
+                                        class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                    />
+                                    <button 
+                                        type="button"
+                                        onclick="togglePasswordVisibility('new-password')"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Minimal 6 karakter</p>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password Baru</label>
+                                <div class="relative">
+                                    <input 
+                                        type="password" 
+                                        id="confirm-password"
+                                        placeholder="Konfirmasi password baru"
+                                        class="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+                                    />
+                                    <button 
+                                        type="button"
+                                        onclick="togglePasswordVisibility('confirm-password')"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    >
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex gap-3 pt-2">
+                                <button 
+                                    onclick="changePassword()"
+                                    class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-3 rounded-lg transition-all shadow-md hover:shadow-lg"
+                                >
+                                    <span class="flex items-center justify-center gap-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        Ubah Password
+                                    </span>
+                                </button>
+                                <button 
+                                    onclick="togglePasswordSection()"
+                                    class="px-6 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-3 rounded-lg transition-all"
+                                >
+                                    Batal
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tombol Keluar -->
+                        <div 
+                            class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 hover:bg-gray-50 transition-colors cursor-pointer" 
+                            onclick="logout()"
+                        >
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm">Keluar</span>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Version Info -->
+                    <div class="text-center mt-8 mb-4">
+                        <p class="text-sm text-gray-500">Versi 1.0.0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 max-w-md mx-auto">
+            <div class="grid grid-cols-2">
+                <button
+                    id="btn-beranda"
+                    onclick="switchTab('beranda')"
+                    class="flex flex-col items-center gap-1 py-3 transition-colors text-blue-600"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                    </svg>
+                    <span class="text-xs">Beranda</span>
+                </button>
+                <button
+                    id="btn-akun"
+                    onclick="switchTab('akun')"
+                    class="flex flex-col items-center gap-1 py-3 transition-colors text-gray-600"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    <span class="text-xs">Akun</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadUserInfo() {
+            try {
+                const res = await fetch('/api/ext/whoiam');
+                if (!res.ok) throw new Error('Unauthorized');
+
+                const data = await res.json();
+                const currentUser = data[0] || { nama: 'Guest', kelas: '' };
+
+                // Update all welcome elements
+                document.querySelectorAll('#welcome, #welcome2').forEach(el => {
+                    el.textContent = `${currentUser.nama} (${currentUser.kelas})`;
+                });
+            } catch (err) {
+                console.error('User fetch error:', err);
+                document.querySelectorAll('#welcome, #welcome2').forEach(el => {
+                    el.textContent = 'Guest';
+                });
+            }
+        }
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active state from all buttons
+            const buttons = document.querySelectorAll('button[id^="btn-"]');
+            buttons.forEach(button => {
+                button.classList.remove('text-blue-600');
+                button.classList.add('text-gray-600');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active state to selected button
+            document.getElementById('btn-' + tabName).classList.remove('text-gray-600');
+            document.getElementById('btn-' + tabName).classList.add('text-blue-600');
+        }
+
+        function togglePasswordSection() {
+            const section = document.getElementById('password-section');
+            const chevron = document.getElementById('chevron-icon');
+            
+            section.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-90');
+            
+            // Clear form when closing
+            if (section.classList.contains('hidden')) {
+                document.getElementById('old-password').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('confirm-password').value = '';
+                hideAlert();
+            }
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert-message');
+            const alertIcon = document.getElementById('alert-icon');
+            const alertText = document.getElementById('alert-text');
+            
+            alertDiv.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800', 'bg-blue-100', 'text-blue-800');
+            
+            if (type === 'error') {
+                alertDiv.classList.add('bg-red-100', 'text-red-800');
+                alertIcon.innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>';
+            } else if (type === 'success') {
+                alertDiv.classList.add('bg-green-100', 'text-green-800');
+                alertIcon.innerHTML = '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>';
+            } else {
+                alertDiv.classList.add('bg-blue-100', 'text-blue-800');
+                alertIcon.innerHTML = '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>';
+            }
+            
+            alertText.textContent = message;
+            alertDiv.classList.remove('hidden');
+        }
+
+        function hideAlert() {
+            const alertDiv = document.getElementById('alert-message');
+            alertDiv.classList.add('hidden');
+        }
+
+        async function changePassword() {
+            const oldPassword = document.getElementById('old-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Validation
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                showAlert('Semua field harus diisi!', 'error');
+                return;
+            }
+
+            if (newPassword.length < 4) {
+                showAlert('Password baru minimal 6 karakter!', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showAlert('Password baru dan konfirmasi tidak cocok!', 'error');
+                return;
+            }
+
+            if (oldPassword === newPassword) {
+                showAlert('Password baru tidak boleh sama dengan password lama!', 'error');
+                return;
+            }
+
+            // Show loading
+            showAlert('Sedang memproses...', 'info');
+
+            try {
+                // Get current user info first
+                const userRes = await fetch('/api/ext/whoiam');
+                if (!userRes.ok) throw new Error('Failed to get user info');
+                
+                const userData = await userRes.json();
+                const currentUser = userData[0];
+                
+                if (!currentUser || !currentUser.nama) {
+                    throw new Error('User not found');
+                }
+
+                const response = await fetch('/api/siswa/password/change', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nama: currentUser.nama,
+                        password_new: newPassword
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('Password berhasil diubah! Silakan login kembali.', 'success');
+                    
+                    // Clear form
+                    document.getElementById('old-password').value = '';
+                    document.getElementById('new-password').value = '';
+                    document.getElementById('confirm-password').value = '';
+                    
+                    // Redirect to login after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/logout';
+                    }, 2000);
+                } else {
+                    showAlert(result.message || 'Gagal mengubah password. Password lama mungkin salah.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Terjadi kesalahan. Silakan coba lagi.', 'error');
+            }
+        }
+
+        function logout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                window.location.href = '/logout';
+            }
+        }
+
+        // Set default tab on load
+        window.addEventListener('DOMContentLoaded', () => {
+            switchTab('beranda');
+            loadUserInfo();
+        });
+    </script>
+</body>
+</html>

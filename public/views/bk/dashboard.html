@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard BK - Alat Ungkap Masalah</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        .detail-table tr:nth-child(odd) td { background-color: #ede7f6; }
+        .detail-table tr:nth-child(even) td { background-color: #d1c4e9; }
+        .detail-table tr:hover td {
+            background-color: #b39ddb;
+            color: #fff;
+            transition: 0.2s;
+        }
+        .rekap-table tr:nth-child(1) td { background-color: #f3e8ff; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 font-sans">
+    
+    <!-- Mobile Menu Button -->
+    <button onclick="toggleSidebar()" class="lg:hidden fixed top-4 left-4 z-50 bg-white p-3 rounded-xl shadow-lg hover:shadow-xl transition-all">
+        <i class="fa fa-bars text-slate-700 text-xl"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-indigo-800 to-indigo-900 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 shadow-2xl">
+        <div class="p-6">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-user-shield text-xl"></i>
+                </div>
+                <h2 class="text-xl font-bold" id="welcome">GURU BK</h2>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="space-y-2">
+                <button onclick="showTab('spa-dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all group bg-white/20">
+                    <i class="fa-solid fa-gauge w-5 text-blue-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Dashboard</span>
+                </button>
+                
+                <button onclick="showTab('spa-students')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all group">
+                    <i class="fa-solid fa-users w-5 text-green-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Data Siswa</span>
+                </button>
+                
+                <button onclick="showTab('spa-results')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all group">
+                    <i class="fa-solid fa-chart-simple w-5 text-purple-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Hasil AUM</span>
+                </button>
+            </nav>
+
+            <!-- Logout -->
+            <a href="/logout" class="mt-8 flex items-center gap-3 px-4 py-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-all text-red-300 hover:text-red-200">
+                <i class="fa-solid fa-right-from-bracket w-5"></i>
+                <span class="font-medium">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile -->
+    <div id="overlay" onclick="toggleSidebar()" class="lg:hidden fixed inset-0 bg-black/50 z-30 hidden"></div>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-20">
+            <div class="px-4 lg:px-8 py-4 lg:py-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-slate-800 ml-12 lg:ml-0">Dashboard BK - Alat Ungkap Masalah</h1>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="p-4 lg:p-8">
+            
+            <!-- Dashboard Tab -->
+            <div id="spa-dashboard" class="spa-tab">
+                <!-- BK Counselor Info -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Informasi Konselor BK</h2>
+                    <div id="bkInfo" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <i class="fa-solid fa-user text-3xl text-blue-600 mb-2"></i>
+                            <h3 class="font-semibold text-slate-800" id="bkName">Loading...</h3>
+                            <p class="text-sm text-slate-600">Nama Konselor</p>
+                        </div>
+                        <div class="text-center p-4 bg-green-50 rounded-lg">
+                            <i class="fa-solid fa-graduation-cap text-3xl text-green-600 mb-2"></i>
+                            <h3 class="font-semibold text-slate-800" id="bkSpecialization">-</h3>
+                            <p class="text-sm text-slate-600">Spesialisasi</p>
+                        </div>
+                        <div class="text-center p-4 bg-purple-50 rounded-lg">
+                            <i class="fa-solid fa-school text-3xl text-purple-600 mb-2"></i>
+                            <h3 class="font-semibold text-slate-800" id="assignedClassesCount">0</h3>
+                            <p class="text-sm text-slate-600">Kelas yang Ditangani</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
+                    <!-- Total Siswa -->
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-100 text-sm font-medium mb-1">Total Siswa</p>
+                                <h3 id="total-siswa" class="text-3xl font-bold">0</h3>
+                            </div>
+                            <div class="bg-white/20 p-3 rounded-xl">
+                                <i class="fa-solid fa-user text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sudah Mengisi -->
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-100 text-sm font-medium mb-1">Sudah Mengisi</p>
+                                <h3 id="total-mengisi" class="text-3xl font-bold">0</h3>
+                            </div>
+                            <div class="bg-white/20 p-3 rounded-xl">
+                                <i class="fa-solid fa-clipboard-check text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Belum Mengisi -->
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-orange-100 text-sm font-medium mb-1">Belum Mengisi</p>
+                                <h3 id="total-belum-mengisi" class="text-3xl font-bold">0</h3>
+                            </div>
+                            <div class="bg-white/20 p-3 rounded-xl">
+                                <i class="fa-solid fa-clipboard-list text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Masalah Terbanyak -->
+                    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-6 text-white shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-red-100 text-sm font-medium mb-1">Masalah Terbanyak</p>
+                                <h3 id="masalah-terbanyak" class="text-xl font-bold">-</h3>
+                            </div>
+                            <div class="bg-white/20 p-3 rounded-xl">
+                                <i class="fa-solid fa-chart-pie text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assigned Classes -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">Kelas yang Ditangani</h2>
+                    <div id="assignedClasses" class="space-y-3">
+                        <div class="text-center py-8 text-slate-500">
+                            <i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i>
+                            <p>Memuat data kelas...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Tab -->
+            <div id="spa-students" class="spa-tab hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6">Data Siswa Per Kelas</h2>
+                    
+                    <!-- Class Filter -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Kelas</label>
+                        <select id="classFilter" onchange="loadStudentsByClass()" class="w-full max-w-md px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors">
+                            <option value="">-- Semua Kelas --</option>
+                        </select>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="mb-6">
+                        <div class="relative">
+                            <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input 
+                                type="text" 
+                                id="studentSearch" 
+                                placeholder="Cari nama siswa..." 
+                                oninput="filterStudents()"
+                                class="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Students Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">No</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Nama</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Kelas</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Status</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Jumlah Masalah</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody" class="divide-y divide-slate-200">
+                                <tr>
+                                    <td colspan="6" class="px-4 py-8 text-center text-slate-500">
+                                        <i class="fa-solid fa-spinner fa-spin text-xl mb-2"></i>
+                                        <p>Memuat data siswa...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Tab -->
+            <div id="spa-results" class="spa-tab hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-6">Hasil AUM Detail</h2>
+                    
+                    <!-- Class Selection -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Kelas</label>
+                        <select id="kelasSelect" class="w-full max-w-md px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors">
+                            <option value="">-- Pilih Kelas --</option>
+                        </select>
+                    </div>
+
+                    <!-- Student List -->
+                    <div id="namaList" class="mb-6">
+                        <p class="text-slate-600">Silakan pilih kelas terlebih dahulu</p>
+                    </div>
+
+                    <!-- Results Container -->
+                    <div id="hasilContainer" class="mb-6"></div>
+
+                    <!-- Chart Container -->
+                    <div id="chartContainer" class="hidden">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Rekapitulasi Kategori</h3>
+                        <canvas id="rekapChart" width="600" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+            <p class="text-center text-slate-600">
+                Made By TEFA RPL • 
+                <a href="https://www.instagram.com/fyonietz?igsh=enV0cXE4NWg0bmpw" class="text-indigo-500 hover:text-indigo-600 font-medium">@Fyonietz</a>
+            </p>
+        </footer>
+    </main>
+<!-- Add this right before the closing </body> tag -->
+
+<!-- Student Detail Modal -->
+<div id="studentModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-slate-200">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-800" id="modalStudentName">Detail Siswa</h3>
+                <button onclick="closeStudentModal()" class="p-2 hover:bg-slate-100 rounded-lg transition-colors">
+                    <i class="fa-solid fa-times text-slate-600"></i>
+                </button>
+            </div>
+        </div>
+        <div class="p-6">
+            <div id="modalStudentInfo" class="mb-6">
+                <!-- Student info will be loaded here -->
+            </div>
+            <div id="modalStudentProblems">
+                <h4 class="text-lg font-semibold text-slate-800 mb-4">Masalah yang Dipilih</h4>
+                <div id="modalProblemsList">
+                    <!-- Problems list will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+// Global variables for AUM Results
+let dataGlobal = [];
+let rekapChartInstance = null;
+let currentBKClasses = [];
+let currentBKData = null;
+let allStudents = [];
+let filteredStudents = [];
+
+// Sidebar toggle
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    sidebar.classList.toggle('-translate-x-full');
+    overlay.classList.toggle('hidden');
+}
+
+// Tab switching
+function showTab(tabId) {
+    document.querySelectorAll('.spa-tab').forEach(tab => {
+        tab.classList.add('hidden');
+    });
+    document.getElementById(tabId).classList.remove('hidden');
+    
+    // Update active nav button
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-white/20');
+    });
+    event.target.closest('.nav-btn')?.classList.add('bg-white/20');
+    
+    // Load data when switching to specific tabs
+    if (tabId === 'spa-students') {
+        loadStudentsData();
+    } else if (tabId === 'spa-results') {
+        loadAUMResultsData();
+    }
+    
+    // Close sidebar on mobile
+    if (window.innerWidth < 1024) {
+        toggleSidebar();
+    }
+}
+
+// Load BK Dashboard Data
+async function loadBKDashboard() {
+    try {
+        const response = await fetch('/api/bk/dashboard');
+        if (!response.ok) throw new Error('Failed to load dashboard data');
+        
+        const data = await response.json();
+        currentBKData = data;
+        
+        // Update BK info
+        document.getElementById('bkName').textContent = data.bk_counselor.nama;
+        document.getElementById('bkSpecialization').textContent = data.bk_counselor.specialization || '-';
+        document.getElementById('assignedClassesCount').textContent = data.assigned_classes.length;
+        document.getElementById('welcome').textContent = data.bk_counselor.nama;
+        
+        // Update statistics
+        document.getElementById('total-siswa').textContent = data.total_students;
+        document.getElementById('total-mengisi').textContent = data.total_submissions;
+        document.getElementById('total-belum-mengisi').textContent = data.total_not_submitted;
+        
+        // Find most common problem
+        if (data.problem_categories.length > 0) {
+            document.getElementById('masalah-terbanyak').textContent = data.problem_categories[0].soal_masalah_kategori;
+        }
+        
+        // Render assigned classes
+        renderAssignedClasses(data.assigned_classes, data.class_statistics);
+        
+        // Populate class filters
+        populateClassFilters(data.assigned_classes);
+        
+    } catch (error) {
+        console.error('Error loading BK dashboard:', error);
+        showError('Gagal memuat data dashboard');
+    }
+}
+
+// Render assigned classes - FIXED VERSION
+function renderAssignedClasses(classes, statistics) {
+    const container = document.getElementById('assignedClasses');
+    
+    if (classes.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-8 text-slate-500">
+                <i class="fa-solid fa-school-circle-exclamation text-3xl mb-3"></i>
+                <p>Belum ada kelas yang ditugaskan</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    classes.forEach((cls, index) => {
+        const stats = statistics.find(s => s.kelas_id == cls.id) || {};
+        const completionRate = stats.completion_rate || 0;
+        
+        html += `
+            <div class="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">
+                        ${index + 1}
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800">${cls.nama}</h4>
+                        <p class="text-sm text-slate-600">${cls.jurusan || 'Umum'}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="flex items-center gap-4">
+                        <div class="text-center">
+                            <div class="font-bold text-slate-800">${stats.total_students || 0}</div>
+                            <div class="text-xs text-slate-600">Siswa</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="font-bold text-slate-800">${stats.total_submissions || 0}</div>
+                            <div class="text-xs text-slate-600">Mengisi</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="font-bold ${completionRate >= 50 ? 'text-green-600' : completionRate >= 25 ? 'text-orange-600' : 'text-red-600'}">
+                                ${completionRate.toFixed(1)}%
+                            </div>
+                            <div class="text-xs text-slate-600">Completion</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}// Populate class filters
+function populateClassFilters(classes) {
+    const classFilter = document.getElementById('classFilter');
+    const kelasSelect = document.getElementById('kelasSelect');
+    
+    // Clear existing options
+    if (classFilter) {
+        classFilter.innerHTML = '<option value="">-- Semua Kelas --</option>';
+    }
+    if (kelasSelect) {
+        kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+    }
+    
+    classes.forEach(cls => {
+        const option = document.createElement('option');
+        option.value = cls.nama;
+        option.textContent = cls.nama;
+        
+        if (classFilter) classFilter.appendChild(option.cloneNode(true));
+        if (kelasSelect) kelasSelect.appendChild(option);
+    });
+
+    // Store classes for later use
+    currentBKClasses = classes;
+}
+
+// Load Students Data for Students Tab
+async function loadStudentsData() {
+    try {
+        const response = await fetch('/api/bk/student-results');
+        if (!response.ok) throw new Error('Failed to load students data');
+        
+        allStudents = await response.json();
+        filteredStudents = [...allStudents];
+        renderStudentsTable();
+        
+    } catch (error) {
+        console.error('Error loading students data:', error);
+        showError('Gagal memuat data siswa');
+    }
+}
+
+// Render students table
+function renderStudentsTable() {
+    const tbody = document.getElementById('studentsTableBody');
+    if (!tbody) return;
+    
+    if (filteredStudents.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-4 py-8 text-center text-slate-500">
+                    <i class="fa-solid fa-users-slash text-xl mb-2"></i>
+                    <p>Tidak ada data siswa</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    let html = '';
+    filteredStudents.forEach((student, index) => {
+        const statusBadge = student.has_submitted 
+            ? '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Sudah Mengisi</span>'
+            : '<span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">Belum Mengisi</span>';
+        
+        const actionButton = student.has_submitted 
+            ? `<button onclick="viewStudentDetail(${student.user_id})" class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors">
+                  Lihat Detail
+               </button>`
+            : '-';
+        
+        html += `
+            <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 text-sm text-slate-600">${index + 1}</td>
+                <td class="px-4 py-3 text-sm text-slate-800 font-medium">${student.nama}</td>
+                <td class="px-4 py-3 text-sm text-slate-600">${student.kelas}</td>
+                <td class="px-4 py-3 text-sm">${statusBadge}</td>
+                <td class="px-4 py-3 text-sm text-slate-600">${student.problem_count || 0}</td>
+                <td class="px-4 py-3 text-sm">${actionButton}</td>
+            </tr>
+        `;
+    });
+    
+    tbody.innerHTML = html;
+}
+
+// Filter students by class
+function loadStudentsByClass() {
+    const classId = document.getElementById('classFilter').value;
+    
+    if (!classId) {
+        filteredStudents = [...allStudents];
+    } else {
+        filteredStudents = allStudents.filter(student => student.kelas === classId);
+    }
+    
+    renderStudentsTable();
+}
+
+// Filter students by search
+function filterStudents() {
+    const query = document.getElementById('studentSearch').value.toLowerCase();
+    
+    filteredStudents = allStudents.filter(student =>
+        student.nama.toLowerCase().includes(query) ||
+        student.kelas.toLowerCase().includes(query)
+    );
+    
+    renderStudentsTable();
+}
+
+// Load AUM Results Data for Results Tab
+async function loadAUMResultsData() {
+    try {
+        // Load student results data for the AUM tab
+        const response = await fetch('/api/bk/student-results');
+        if (!response.ok) throw new Error('Failed to load student results');
+        
+        dataGlobal = await response.json();
+        
+        // Add event listener for class selection
+        const kelasSelect = document.getElementById('kelasSelect');
+        if (kelasSelect) {
+            kelasSelect.addEventListener('change', function() {
+                loadStudentsByKelas(this.value);
+            });
+        }
+        
+    } catch (error) {
+        console.error('Error loading AUM results:', error);
+        showError('Gagal memuat data hasil AUM');
+    }
+}
+
+// Load students by selected kelas for AUM Results
+function loadStudentsByKelas(kelas) {
+    const namaList = document.getElementById('namaList');
+    const hasilContainer = document.getElementById('hasilContainer');
+    const chartContainer = document.getElementById('chartContainer');
+    
+    if (!namaList || !hasilContainer || !chartContainer) return;
+    
+    hasilContainer.innerHTML = '';
+    namaList.innerHTML = '<p>Loading daftar nama...</p>';
+    chartContainer.classList.add('hidden');
+
+    if (!kelas) {
+        namaList.innerHTML = '<p class="text-slate-600">Silakan pilih kelas terlebih dahulu</p>';
+        return;
+    }
+
+    // Filter data by class
+    const filtered = dataGlobal.filter(item => item.kelas === kelas);
+
+    const namaSet = new Set(filtered.map(item => item.nama));
+    if (namaSet.size === 0) {
+        namaList.innerHTML = "<p class='text-slate-600'>Tidak ada nama ditemukan untuk kelas ini.</p>";
+        return;
+    }
+
+    let html = `<div class="mb-6">`;
+    html += `<p class="font-semibold text-slate-800 mb-3">Daftar Nama:</p>`;
+    html += `<div class="flex flex-wrap gap-2 mb-4">`;
+    namaSet.forEach(nama => {
+        html += `<button onclick="tampilkanHasil('${nama}', '${kelas}')" class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors">${nama}</button>`;
+    });
+    html += `</div>`;
+    
+    // Add button for class-level combined view
+    html += `<button onclick="tampilkanHasilKelas('${kelas}')" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors font-semibold">
+        <i class="fa-solid fa-users mr-2"></i>Lihat Hasil Gabungan Seluruh Kelas
+    </button>`;
+    html += `</div>`;
+
+    namaList.innerHTML = html;
+}
+
+// Show detailed results for a student in AUM Results tab
+async function tampilkanHasil(nama, kelas) {
+    const hasilContainer = document.getElementById('hasilContainer');
+    const chartContainer = document.getElementById('chartContainer');
+    
+    if (!hasilContainer || !chartContainer) return;
+    
+    hasilContainer.innerHTML = "<p>Loading hasil...</p>";
+    chartContainer.classList.add('hidden');
+
+    // Find the student in our data
+    const student = dataGlobal.find(s => s.nama === nama && s.kelas === kelas);
+    
+    if (!student) {
+        hasilContainer.innerHTML = "<p class='text-red-600'>Data siswa tidak ditemukan.</p>";
+        return;
+    }
+
+    try {
+        // Get detailed results for this student
+        const response = await fetch(`/api/bk/detailed-results?student_id=${student.user_id}`);
+        if (!response.ok) throw new Error('Failed to load detailed results');
+        
+        const detailedData = await response.json();
+        
+        // Build HTML for detail jawaban
+        let html = `<div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">`;
+        html += `<h2 class="text-xl font-bold text-slate-800 mb-4">Hasil AUM untuk ${nama} (${kelas})</h2>`;
+        html += `<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">`;
+        html += `<div class="bg-blue-50 p-4 rounded-lg"><p class="font-semibold text-blue-800">Jumlah Item: ${student.problem_count || 0}</p></div>`;
+        html += `<div class="bg-green-50 p-4 rounded-lg"><p class="font-semibold text-green-800">Skor: ${(student.problem_count || 0) * 5}</p></div>`;
+        html += `</div>`;
+
+        if (detailedData.detailed_results && detailedData.detailed_results.length > 0) {
+            // Build kategori count from detailed results
+            const kategoriCount = {};
+            detailedData.detailed_results.forEach(category => {
+                kategoriCount[category.category] = category.count;
+            });
+
+            // Show detailed problems for each category
+            html += `<h3 class="text-lg font-semibold text-slate-800 mb-3">Detail Masalah per Kategori</h3>`;
+            
+            detailedData.detailed_results.forEach(category => {
+                html += `<div class="mb-6 p-4 bg-slate-50 rounded-lg">`;
+                html += `<h4 class="font-semibold text-slate-700 mb-2">${category.category} (${category.count} masalah)</h4>`;
+                html += `<div class="space-y-2">`;
+                
+                category.problems.forEach(problem => {
+                    html += `<div class="flex items-start gap-2 p-2 bg-white rounded border border-slate-200">`;
+                    html += `<span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded mt-1">${problem.problem_id}</span>`;
+                    html += `<span class="text-sm text-slate-700 flex-1">${problem.problem_name}</span>`;
+                    html += `</div>`;
+                });
+                
+                html += `</div></div>`;
+            });
+
+            // Build HTML for Rekapitulasi Table
+            html += `<h3 class="text-lg font-semibold text-slate-800 mt-6 mb-3">Rekapitulasi Kategori</h3>`;
+            html += `<div class="overflow-x-auto">`;
+            html += `<table class="rekap-table w-full border-collapse border border-slate-300">`;
+            html += `<tr><th class="border border-slate-300 p-2 bg-indigo-600 text-white">Kategori</th><th class="border border-slate-300 p-2 bg-indigo-600 text-white">Jumlah Dipilih</th></tr>`;
+            for (const kategori in kategoriCount) {
+                html += `<tr>
+                    <td class="border border-slate-300 p-2">${kategori}</td>
+                    <td class="border border-slate-300 p-2 text-center">${kategoriCount[kategori]}</td>
+                </tr>`;
+            }
+            html += `</table></div>`;
+
+            hasilContainer.innerHTML = html;
+
+            // Show chart container
+            chartContainer.classList.remove('hidden');
+
+            // Setup Chart.js bar chart
+            const ctx = document.getElementById('rekapChart').getContext('2d');
+
+            // Destroy existing chart instance if present
+            if (rekapChartInstance) {
+                rekapChartInstance.destroy();
+            }
+
+            // Define a purple palette for bars
+            const colors = [
+                '#f3e8ff', '#e1caff', '#d0aaff', '#b88dfc', '#a46de0',
+                '#8e4dd6', '#7533b9', '#5d239c', '#49187d', '#36105c'
+            ];
+
+            // Assign colors to bars
+            const backgroundColors = Object.keys(kategoriCount).map((_, i) => colors[i % colors.length]);
+
+            rekapChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(kategoriCount),
+                    datasets: [{
+                        label: 'Jumlah Dipilih',
+                        data: Object.values(kategoriCount),
+                        backgroundColor: backgroundColors,
+                        borderColor: '#6c3483',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 },
+                            title: { display: true, text: 'Jumlah Dipilih' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Kategori' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+        } else {
+            html += `<p class="text-slate-600">Tidak ada data masalah yang ditemukan untuk siswa ini.</p>`;
+            hasilContainer.innerHTML = html;
+        }
+
+    } catch (error) {
+        console.error('Error loading detailed results:', error);
+        hasilContainer.innerHTML = "<p class='text-red-600'>Gagal memuat detail hasil.</p>";
+    }
+}
+
+// Show combined results for entire class
+async function tampilkanHasilKelas(kelas) {
+    const hasilContainer = document.getElementById('hasilContainer');
+    const chartContainer = document.getElementById('chartContainer');
+    
+    if (!hasilContainer || !chartContainer) return;
+    
+    hasilContainer.innerHTML = "<p>Loading hasil gabungan kelas...</p>";
+    chartContainer.classList.add('hidden');
+
+    try {
+        // Get all students in this class
+        const studentsInClass = dataGlobal.filter(student => student.kelas === kelas && student.has_submitted);
+        
+        if (studentsInClass.length === 0) {
+            hasilContainer.innerHTML = "<p class='text-slate-600'>Tidak ada siswa yang sudah mengisi AUM di kelas ini.</p>";
+            return;
+        }
+
+        // Collect all detailed data for the class
+        const classResults = {
+            total_students: studentsInClass.length,
+            total_problems: 0,
+            categories: {},
+            problems: {}
+        };
+
+        // Fetch detailed results for each student
+        for (const student of studentsInClass) {
+            const response = await fetch(`/api/bk/detailed-results?student_id=${student.user_id}`);
+            if (response.ok) {
+                const detailedData = await response.json();
+                
+                if (detailedData.detailed_results) {
+                    detailedData.detailed_results.forEach(category => {
+                        // Count categories
+                        if (!classResults.categories[category.category]) {
+                            classResults.categories[category.category] = 0;
+                        }
+                        classResults.categories[category.category] += category.count;
+                        
+                        // Count individual problems
+                        category.problems.forEach(problem => {
+                            const problemKey = `${problem.problem_id}-${problem.problem_name}`;
+                            if (!classResults.problems[problemKey]) {
+                                classResults.problems[problemKey] = {
+                                    id: problem.problem_id,
+                                    name: problem.problem_name,
+                                    category: category.category,
+                                    count: 0
+                                };
+                            }
+                            classResults.problems[problemKey].count++;
+                        });
+                        
+                        classResults.total_problems += category.count;
+                    });
+                }
+            }
+        }
+
+        // Build HTML for class combined results
+        let html = `<div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">`;
+        html += `<h2 class="text-xl font-bold text-slate-800 mb-4">Hasil AUM Gabungan - ${kelas}</h2>`;
+        html += `<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">`;
+        html += `<div class="bg-blue-50 p-4 rounded-lg"><p class="font-semibold text-blue-800">Total Siswa: ${classResults.total_students}</p></div>`;
+        html += `<div class="bg-green-50 p-4 rounded-lg"><p class="font-semibold text-green-800">Total Masalah: ${classResults.total_problems}</p></div>`;
+        html += `<div class="bg-purple-50 p-4 rounded-lg"><p class="font-semibold text-purple-800">Rata-rata per Siswa: ${(classResults.total_problems / classResults.total_students).toFixed(1)}</p></div>`;
+        html += `</div>`;
+
+        // Show top problems in the class
+        html += `<h3 class="text-lg font-semibold text-slate-800 mb-3">Masalah Paling Sering Muncul</h3>`;
+        
+        // Convert problems object to array and sort by count
+        const topProblems = Object.values(classResults.problems)
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 10); // Top 10 problems
+        
+        html += `<div class="space-y-3 mb-6">`;
+        topProblems.forEach((problem, index) => {
+            const percentage = ((problem.count / classResults.total_students) * 100).toFixed(1);
+            html += `<div class="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg">`;
+            html += `<div class="flex items-start gap-3 flex-1">`;
+            html += `<span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded">${problem.id}</span>`;
+            html += `<div class="flex-1">`;
+            html += `<p class="text-sm font-medium text-slate-800">${problem.name}</p>`;
+            html += `<p class="text-xs text-slate-600">${problem.category}</p>`;
+            html += `</div>`;
+            html += `</div>`;
+            html += `<div class="text-right">`;
+            html += `<p class="text-sm font-semibold text-slate-800">${problem.count} siswa</p>`;
+            html += `<p class="text-xs text-slate-600">${percentage}%</p>`;
+            html += `</div>`;
+            html += `</div>`;
+        });
+        html += `</div>`;
+
+        // Show category distribution
+        html += `<h3 class="text-lg font-semibold text-slate-800 mb-3">Distribusi Kategori</h3>`;
+        html += `<div class="overflow-x-auto">`;
+        html += `<table class="rekap-table w-full border-collapse border border-slate-300">`;
+        html += `<tr><th class="border border-slate-300 p-2 bg-indigo-600 text-white">Kategori</th><th class="border border-slate-300 p-2 bg-indigo-600 text-white">Jumlah Masalah</th><th class="border border-slate-300 p-2 bg-indigo-600 text-white">Persentase</th></tr>`;
+        
+        for (const [kategori, count] of Object.entries(classResults.categories)) {
+            const percentage = ((count / classResults.total_problems) * 100).toFixed(1);
+            html += `<tr>
+                <td class="border border-slate-300 p-2">${kategori}</td>
+                <td class="border border-slate-300 p-2 text-center">${count}</td>
+                <td class="border border-slate-300 p-2 text-center">${percentage}%</td>
+            </tr>`;
+        }
+        html += `</table></div></div>`;
+
+        hasilContainer.innerHTML = html;
+
+        // Show chart container
+        chartContainer.classList.remove('hidden');
+
+        // Setup Chart.js bar chart for class results
+        const ctx = document.getElementById('rekapChart').getContext('2d');
+
+        // Destroy existing chart instance if present
+        if (rekapChartInstance) {
+            rekapChartInstance.destroy();
+        }
+
+        // Define a purple palette for bars
+        const colors = [
+            '#f3e8ff', '#e1caff', '#d0aaff', '#b88dfc', '#a46de0',
+            '#8e4dd6', '#7533b9', '#5d239c', '#49187d', '#36105c'
+        ];
+
+        // Assign colors to bars
+        const backgroundColors = Object.keys(classResults.categories).map((_, i) => colors[i % colors.length]);
+
+        rekapChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(classResults.categories),
+                datasets: [{
+                    label: 'Jumlah Masalah',
+                    data: Object.values(classResults.categories),
+                    backgroundColor: backgroundColors,
+                    borderColor: '#6c3483',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Jumlah Masalah' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Kategori' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Error loading class results:', error);
+        hasilContainer.innerHTML = "<p class='text-red-600'>Gagal memuat hasil gabungan kelas.</p>";
+    }
+}
+
+// View student detail modal
+async function viewStudentDetail(studentId) {
+    try {
+        const response = await fetch(`/api/bk/detailed-results?student_id=${studentId}`);
+        if (!response.ok) throw new Error('Failed to load student details');
+        
+        const data = await response.json();
+        openStudentModal(data);
+        
+    } catch (error) {
+        console.error('Error loading student details:', error);
+        showError('Gagal memuat detail siswa');
+    }
+}
+
+// Open student modal
+function openStudentModal(data) {
+    const modal = document.getElementById('studentModal');
+    const modalStudentName = document.getElementById('modalStudentName');
+    const modalStudentInfo = document.getElementById('modalStudentInfo');
+    const modalProblemsList = document.getElementById('modalProblemsList');
+    
+    if (!modal || !modalStudentName || !modalStudentInfo || !modalProblemsList) {
+        console.error('Modal elements not found');
+        return;
+    }
+    
+    modalStudentName.textContent = data.student_info.nama;
+    
+    // Populate student info
+    modalStudentInfo.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="text-center p-3 bg-slate-50 rounded-lg">
+                <div class="font-semibold text-slate-800">${data.student_info.kelas}</div>
+                <div class="text-sm text-slate-600">Kelas</div>
+            </div>
+            <div class="text-center p-3 bg-slate-50 rounded-lg">
+                <div class="font-semibold text-slate-800">${data.student_info.jurusan || '-'}</div>
+                <div class="text-sm text-slate-600">Jurusan</div>
+            </div>
+            <div class="text-center p-3 bg-slate-50 rounded-lg">
+                <div class="font-semibold text-slate-800">${data.detailed_results.length}</div>
+                <div class="text-sm text-slate-600">Kategori Masalah</div>
+            </div>
+        </div>
+    `;
+    
+    // Populate problems list
+    if (data.detailed_results.length === 0) {
+        modalProblemsList.innerHTML = '<p class="text-slate-500 text-center py-4">Tidak ada masalah yang dipilih</p>';
+    } else {
+        let html = '<div class="space-y-3">';
+        data.detailed_results.forEach(category => {
+            html += `<div class="border border-slate-200 rounded-lg overflow-hidden">`;
+            html += `<div class="bg-indigo-100 p-3 border-b border-slate-200">`;
+            html += `<h5 class="font-semibold text-slate-800">${category.category} (${category.count} masalah)</h5>`;
+            html += `</div>`;
+            html += `<div class="p-3 space-y-2">`;
+            
+            category.problems.forEach(problem => {
+                html += `<div class="flex items-start gap-2 p-2 bg-white rounded border border-slate-100">`;
+                html += `<span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded mt-1">${problem.problem_id}</span>`;
+                html += `<span class="text-sm text-slate-700 flex-1">${problem.problem_name}</span>`;
+                html += `</div>`;
+            });
+            
+            html += `</div></div>`;
+        });
+        html += '</div>';
+        modalProblemsList.innerHTML = html;
+    }
+    
+    modal.classList.remove('hidden');
+}
+
+// Close student modal
+function closeStudentModal() {
+    const modal = document.getElementById('studentModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+// Utility function to show errors
+function showError(message) {
+    alert(message);
+}
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', () => {
+    loadBKDashboard();
+    
+    // Add event listener for modal close
+    const modal = document.getElementById('studentModal');
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target.id === 'studentModal') {
+                closeStudentModal();
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>

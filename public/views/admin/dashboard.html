@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard - AUM</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 font-sans">
+    
+    <!-- Mobile Menu Button -->
+    <button onclick="toggleSidebar()" class="lg:hidden fixed top-4 left-4 z-50 bg-white p-3 rounded-xl shadow-lg hover:shadow-xl transition-all">
+        <i class="fa fa-bars text-slate-700 text-xl"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-indigo-800 to-indigo-900 text-white transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 shadow-2xl">
+        <div class="p-6">
+            <!-- Logo -->
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
+                    <i class="fa-solid fa-user-shield text-xl"></i>
+                </div>
+                <h2 class="text-xl font-bold">ADMIN</h2>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="space-y-2">
+                <button onclick="showTab('spa-dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all group bg-white/20">
+                    <i class="fa-solid fa-gauge w-5 text-blue-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Dashboard</span>
+                </button>
+                
+                <button onclick="showTab('spa-users')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all group">
+                    <i class="fa-solid fa-users w-5 text-green-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Kelola User</span>
+                </button>
+                
+                <button onclick="showTab('spa-bk')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all group">
+                    <i class="fa-solid fa-chalkboard-teacher w-5 text-yellow-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Kelola BK</span>
+                </button>
+                
+                <button onclick="showTab('spa-kategori')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-all group">
+                    <i class="fa-solid fa-list w-5 text-purple-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-medium">Kelola Kategori</span>
+                </button>
+            </nav>
+
+            <!-- Logout -->
+            <a href="/logout" class="mt-8 flex items-center gap-3 px-4 py-3 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-all text-red-300 hover:text-red-200">
+                <i class="fa-solid fa-right-from-bracket w-5"></i>
+                <span class="font-medium">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile -->
+    <div id="overlay" onclick="toggleSidebar()" class="lg:hidden fixed inset-0 bg-black/50 z-30 hidden"></div>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 min-h-screen">
+        <!-- Header -->
+        <header class="bg-white shadow-sm sticky top-0 z-20">
+            <div class="px-4 lg:px-8 py-4 lg:py-6">
+                <h1 class="text-2xl lg:text-3xl font-bold text-slate-800 ml-12 lg:ml-0">Alat Ungkap Masalah - Admin</h1>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="p-4 lg:p-8">
+            
+            <!-- Dashboard Tab -->
+            <div id="spa-dashboard" class="spa-tab">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+                    <!-- Total Siswa -->
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-100 text-sm font-medium mb-1">Total Siswa</p>
+                                <h3 id="total-siswa" class="text-4xl font-bold">0</h3>
+                            </div>
+                            <div class="bg-white/20 p-4 rounded-xl">
+                                <i class="fa-solid fa-user text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mengisi -->
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-100 text-sm font-medium mb-1">Sudah Mengisi</p>
+                                <h3 id="total-mengisi" class="text-4xl font-bold">0</h3>
+                            </div>
+                            <div class="bg-white/20 p-4 rounded-xl">
+                                <i class="fa-solid fa-clipboard-check text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Belum Mengisi -->
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-orange-100 text-sm font-medium mb-1">Belum Mengisi</p>
+                                <h3 id="total-belum-mengisi" class="text-4xl font-bold">0</h3>
+                            </div>
+                            <div class="bg-white/20 p-4 rounded-xl">
+                                <i class="fa-solid fa-clipboard-list text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Masalah Terberat -->
+                    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-red-100 text-sm font-medium mb-1">Masalah Terberat</p>
+                                <h3 id="masalah-terberat" class="text-2xl font-bold">N/A</h3>
+                            </div>
+                            <div class="bg-white/20 p-4 rounded-xl">
+                                <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jumlah Kategori -->
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-100 text-sm font-medium mb-1">Kategori Terdaftar</p>
+                                <h3 id="jumlah-kategori" class="text-4xl font-bold">N/A</h3>
+                            </div>
+                            <div class="bg-white/20 p-4 rounded-xl">
+                                <i class="fa-solid fa-bar-chart text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jumlah Sub Kategori -->
+                    <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-pink-100 text-sm font-medium mb-1">Pilihan Terdaftar</p>
+                                <h3 id="jumlah-sub-kategori" class="text-4xl font-bold">N/A</h3>
+                            </div>
+                            <div class="bg-white/20 p-4 rounded-xl">
+                                <i class="fa-solid fa-pie-chart text-3xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Management Tab -->
+            <div id="spa-users" class="spa-tab hidden">
+                <!-- Import CSV Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                    <button onclick="toggleSection('importCsvForm')" class="w-full flex items-center justify-between text-xl font-bold text-slate-800 mb-4 hover:text-green-600 transition-colors">
+                        <span><i class="fa-solid fa-file-import mr-2"></i>Import Siswa dari CSV</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    
+                    <div id="importCsvForm" class="hidden space-y-4">
+                        <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-green-500 transition-colors">
+                            <input type="file" id="csvFile" accept=".csv" class="hidden" />
+                            <div id="csvDropZone" class="cursor-pointer">
+                                <i class="fa-solid fa-cloud-upload-alt text-4xl text-slate-400 mb-3"></i>
+                                <p class="text-slate-600 font-medium">Klik untuk memilih file CSV atau drag & drop di sini</p>
+                                <p class="text-sm text-slate-500 mt-2">Format: Nama, Kelas (2 kolom)</p>
+                            </div>
+                        </div>
+                        
+                        <div id="csvPreview" class="hidden">
+                            <h4 class="font-medium text-slate-700 mb-2">Preview Data:</h4>
+                            <div class="bg-slate-50 rounded-lg p-4 max-h-40 overflow-y-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-slate-200">
+                                        <tr>
+                                            <th class="p-2 text-left">Nama</th>
+                                            <th class="p-2 text-left">Kelas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="csvPreviewBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button onclick="importCSV()" id="importBtn" class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <i class="fa-solid fa-upload mr-2"></i>Import Data
+                            </button>
+                            <button onclick="clearCSVForm()" class="flex-1 px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium rounded-xl transition-all">
+                                <i class="fa-solid fa-times mr-2"></i>Batal
+                            </button>
+                        </div>
+                        
+                        <div id="importResult" class="hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Register User Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                    <button onclick="toggleSection('registerUserForm')" class="w-full flex items-center justify-between text-xl font-bold text-slate-800 mb-4 hover:text-indigo-600 transition-colors">
+                        <span><i class="fa-solid fa-user-plus mr-2"></i>Register User Baru</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    
+                    <div id="registerUserForm" class="hidden space-y-4">
+                        <input type="text" id="nama" placeholder="Nama Lengkap" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors" />
+                        <input type="text" id="password" placeholder="Password" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors" />
+                        <select id="roleSelect" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors mb-2">
+                            <option value="">-- Pilih Role --</option>
+                        </select>
+
+                        <select id="Kelas" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors">
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="X TJKT 1">X TJKT 1</option>
+                            <option value="X TJKT 2">X TJKT 2</option>
+                            <option value="X TJKT 3">X TJKT 3</option>
+                            <option value="X TJKT 4">X TJKT 4</option>
+                            <option value="X DKV 1">X DKV 1</option>
+                            <option value="X DKV 2">X DKV 2</option>
+                            <option value="X RPL 1">X RPL 1</option>
+                            <option value="X RPL 2">X RPL 2</option>
+                            <option value="X BC">X BC</option>
+                        </select>
+                        <div class="flex gap-3">
+                            <button onclick="saveUser()" class="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-medium rounded-xl transition-all">
+                                <i class="fa-solid fa-save mr-2"></i>Simpan
+                            </button>
+                            <button onclick="toggleSection('registerUserForm'); clearUserInputs();" class="flex-1 px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium rounded-xl transition-all">
+                                <i class="fa-solid fa-times mr-2"></i>Batal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NOTE: Individual user deletion is now available per-row in the user table (Aksi column) -->
+
+                <!-- User List Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4"><i class="fa-solid fa-users mr-2"></i>Daftar Semua User</h2>
+                    <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="md:col-span-2">
+                            <label class="text-sm text-slate-600 mb-2 block">Cari nama / password</label>
+                            <input id="userSearchInput" oninput="applyUserFilters()" type="text" placeholder="Cari nama, kelas atau password..." class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors" />
+                        </div>
+                        <div>
+                            <label class="text-sm text-slate-600 mb-2 block">Filter per Kelas</label>
+                            <select id="userFilterKelas" onchange="applyUserFilters()" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors">
+                                <option value="">-- Semua Kelas --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <label class="text-sm text-slate-600">Tampilkan per halaman:</label>
+                                <select id="userPageSize" onchange="changeUserPageSize()" class="px-3 py-2 border rounded">
+                                    <option value="5">5</option>
+                                    <option value="10" selected>10</option>
+                                    <option value="25">25</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="prevUserPage()" class="px-3 py-2 bg-slate-100 rounded">Prev</button>
+                                <span id="userPageInfo" class="text-sm text-slate-600">Page 1</span>
+                                <button onclick="nextUserPage()" class="px-3 py-2 bg-slate-100 rounded">Next</button>
+                            </div>
+                        </div>
+
+                        <table class="w-full">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">No</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Nama</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Kelas</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Password</th>
+                                    <th class="px-4 py-3 text-right text-sm font-semibold text-slate-700">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody" class="divide-y divide-slate-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Kelas Management Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 mt-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4"><i class="fa-solid fa-school mr-2"></i>Kelola Kelas</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <input type="text" id="newKelasName" placeholder="Nama Kelas (misal: XI PPLG1)" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-green-500 focus:outline-none transition-colors" />
+                            <button onclick="createKelas()" class="mt-3 w-full px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl">Buat Kelas</button>
+                        </div>
+                        <div>
+            
+                            <select id="kelasAdminDropdown" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-red-500 focus:outline-none transition-colors">
+                                <option value="">-- Memuat kelas --</option>
+                            </select>
+                            <button onclick="deleteKelas()" class="mt-3 w-full px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl">Hapus Kelas</button>
+                            <p id="kelasMessage" class="text-sm mt-2"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BK Management Tab -->
+            <div id="spa-bk" class="spa-tab hidden">
+                <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4"><i class="fa-solid fa-chalkboard-teacher mr-2"></i>Kelola BK</h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <input type="text" id="newBkName" placeholder="Nama BK (contoh: Budi)" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-yellow-500 focus:outline-none transition-colors" />
+                            <input type="text" id="newBkPassword" placeholder="Password" class="w-full mt-2 px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-yellow-500 focus:outline-none transition-colors" />
+                            <select id="newBkKelas" class="w-full mt-2 px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-yellow-500 focus:outline-none transition-colors">
+                                <option value="">-- Pilih Kelas (opsional) --</option>
+                            </select>
+                            <button onclick="createBK()" class="mt-3 w-full px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-white rounded-xl">Buat BK</button>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-600">Daftar BK saat ini. Anda dapat menetapkan/mengubah kelas untuk setiap BK.</p>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-slate-100">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">No</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Nama BK</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-slate-700">Kelas</th>
+                                    <th class="px-4 py-3 text-right text-sm font-semibold text-slate-700">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bkTableBody" class="divide-y divide-slate-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kategori Management Tab -->
+            <div id="spa-kategori" class="spa-tab hidden">
+                <!-- Add Kategori/Subkategori Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                    <button onclick="toggleSection('addKategoriForm')" class="w-full flex items-center justify-between text-xl font-bold text-slate-800 mb-4 hover:text-purple-600 transition-colors">
+                        <span><i class="fa-solid fa-plus-circle mr-2"></i>Tambah Kategori / Sub Kategori</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    
+                    <div id="addKategoriForm" class="hidden space-y-4">
+                        <div class="flex gap-3">
+                            <input type="text" id="inputKategoriCode" placeholder="ABC" maxlength="3" class="w-20 px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors uppercase" />
+                            <input type="text" id="inputKategori" placeholder="Nama Kategori" class="flex-1 px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors" />
+                        </div>
+                        <p class="text-sm text-slate-600"><i class="fa-solid fa-info-circle mr-1"></i>Masukkan kode 3 digit (misal: JDK) dan nama kategori</p>
+                        
+                        <select id="kategoriForSubkategori" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors">
+                            <option value="">-- Pilih Kategori untuk Subkategori --</option>
+                        </select>
+                        
+                        <input type="text" id="inputSubkategori" placeholder="Nama Subkategori (opsional)" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors" />
+                        
+                        <div class="flex gap-3">
+                            <button onclick="saveKategoriAtauSub()" class="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-medium rounded-xl transition-all">
+                                <i class="fa-solid fa-save mr-2"></i>Simpan
+                            </button>
+                            <button onclick="toggleSection('addKategoriForm'); clearKategoriInputs();" class="flex-1 px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium rounded-xl transition-all">
+                                <i class="fa-solid fa-times mr-2"></i>Batal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Kategori Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4"><i class="fa-solid fa-folder mr-2"></i>Daftar Kategori</h3>
+                        <select id="kategoriDropdown" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors">
+                            <option value="">-- Pilih Kategori --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4"><i class="fa-solid fa-folder-open mr-2"></i>Daftar Subkategori</h3>
+                        <select id="subkategoriDropdown" disabled class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors disabled:bg-slate-100">
+                            <option value="">-- Pilih Subkategori --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Delete Kategori Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <button onclick="toggleSection('deleteKategoriForm')" class="w-full flex items-center justify-between text-xl font-bold text-slate-800 mb-4 hover:text-red-600 transition-colors">
+                        <span><i class="fa-solid fa-trash mr-2"></i>Hapus Kategori / Subkategori</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    
+                    <div id="deleteKategoriForm" class="hidden space-y-4">
+                        <select id="kategoriDeleteDropdown" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-red-500 focus:outline-none transition-colors">
+                            <option value="">-- Pilih Kategori untuk Hapus --</option>
+                        </select>
+                        
+                        <select id="subkategoriDeleteDropdown" disabled class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-red-500 focus:outline-none transition-colors disabled:bg-slate-100">
+                            <option value="">-- Pilih Subkategori untuk Hapus --</option>
+                        </select>
+                        
+                        <p id="deleteKategoriMessage" class="text-sm"></p>
+                        
+                        <div class="flex gap-3">
+                            <button onclick="deleteKategori()" class="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium rounded-xl transition-all">
+                                <i class="fa-solid fa-trash mr-2"></i>Hapus Kategori
+                            </button>
+                            <button onclick="deleteSubkategori()" class="flex-1 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium rounded-xl transition-all">
+                                <i class="fa-solid fa-trash mr-2"></i>Hapus Subkategori
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+            <p class="text-center text-slate-600">
+                Made By TEFA RPL • 
+                <a href="https://www.instagram.com/fyonietz?igsh=enV0cXE4NWg0bmpw" class="text-indigo-500 hover:text-indigo-600 font-medium">@Fyonietz</a>
+            </p>
+        </footer>
+    </main>
+
+    <!-- Link to external JavaScript file -->
+    <script src="/views/admin/script.js"></script>
+    
+    <!-- Add CSV import functionality -->
+    <script>
+        // CSV Import functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const csvFileInput = document.getElementById('csvFile');
+            const csvDropZone = document.getElementById('csvDropZone');
+            let csvData = [];
+
+            // Drag and drop functionality
+            csvDropZone.addEventListener('click', () => csvFileInput.click());
+            
+            csvDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                csvDropZone.classList.add('border-green-500', 'bg-green-50');
+            });
+            
+            csvDropZone.addEventListener('dragleave', () => {
+                csvDropZone.classList.remove('border-green-500', 'bg-green-50');
+            });
+            
+            csvDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                csvDropZone.classList.remove('border-green-500', 'bg-green-50');
+                const files = e.dataTransfer.files;
+                if (files.length > 0 && files[0].type === 'text/csv') {
+                    csvFileInput.files = files;
+                    handleCSVFile(files[0]);
+                }
+            });
+
+            csvFileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleCSVFile(e.target.files[0]);
+                }
+            });
+        });
+
+        function handleCSVFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csvContent = e.target.result;
+                    csvData = parseCSV(csvContent);
+                    
+                    if (csvData.length === 0) {
+                        alert('File CSV kosong atau format tidak sesuai');
+                        return;
+                    }
+                    
+                    // Show preview
+                    showCSVPreview(csvData);
+                    document.getElementById('importBtn').disabled = false;
+                    
+                } catch (error) {
+                    console.error('Error parsing CSV:', error);
+                    alert('Error membaca file CSV: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim() !== '');
+            const result = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                // Simple CSV parsing - split by comma, handle quoted fields
+                const regex = /(?:,|\n|^)("(?:(?:"")*[^"]*)*"|[^",\n]*|(?:\n|$))/g;
+                const matches = line.match(regex);
+                
+                if (matches) {
+                    const row = matches.map(cell => {
+                        cell = cell.replace(/^,/, ''); // Remove leading comma
+                        if (cell.startsWith('"') && cell.endsWith('"')) {
+                            cell = cell.slice(1, -1).replace(/""/g, '"');
+                        }
+                        return cell.trim();
+                    });
+                    
+                    // Only add rows with at least 2 columns
+                    if (row.length >= 2 && row[0] && row[1]) {
+                        result.push({
+                            nama: row[0],
+                            kelas: row[1]
+                        });
+                    }
+                }
+            }
+            
+            return result;
+        }
+
+        function showCSVPreview(data) {
+            const previewBody = document.getElementById('csvPreviewBody');
+            previewBody.innerHTML = '';
+            
+            // Show first 5 rows as preview
+            const previewData = data.slice(0, 5);
+            
+            previewData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-2 border-b border-slate-200">${escapeHtml(row.nama)}</td>
+                    <td class="p-2 border-b border-slate-200">${escapeHtml(row.kelas)}</td>
+                `;
+                previewBody.appendChild(tr);
+            });
+            
+            if (data.length > 5) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td colspan="2" class="p-2 text-center text-slate-500">... dan ${data.length - 5} baris lainnya</td>`;
+                previewBody.appendChild(tr);
+            }
+            
+            document.getElementById('csvPreview').classList.remove('hidden');
+        }
+
+        async function importCSV() {
+            const importBtn = document.getElementById('importBtn');
+            const importResult = document.getElementById('importResult');
+            
+            try {
+                importBtn.disabled = true;
+                importBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Mengimport...';
+                
+                const formData = new FormData();
+                const csvBlob = new Blob([JSON.stringify({ csv_data: csvData })], { type: 'application/json' });
+                formData.append('csv_file', csvBlob, 'import.csv');
+                
+                const response = await fetch('/api/admin/import-siswa', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    importResult.className = 'p-4 rounded-lg bg-green-50 border border-green-200';
+                    importResult.innerHTML = `
+                        <h4 class="font-medium text-green-800 mb-2"><i class="fa-solid fa-check-circle mr-2"></i>Import Berhasil!</h4>
+                        <p class="text-green-700 text-sm">Total: ${result.stats.total}, Berhasil: ${result.stats.successful}, Gagal: ${result.stats.failed}</p>
+                        ${result.failed_imports.length > 0 ? `
+                            <details class="mt-2">
+                                <summary class="text-sm text-green-700 cursor-pointer">Lihat detail kegagalan</summary>
+                                <ul class="text-sm text-red-600 mt-1 ml-4">
+                                    ${result.failed_imports.map(item => `<li>• ${escapeHtml(item)}</li>`).join('')}
+                                </ul>
+                            </details>
+                        ` : ''}
+                    `;
+                    
+                    // Refresh user list
+                    if (typeof loadUserList === 'function') {
+                        loadUserList();
+                    }
+                    
+                } else {
+                    throw new Error(result.error || 'Import gagal');
+                }
+                
+            } catch (error) {
+                console.error('Import error:', error);
+                importResult.className = 'p-4 rounded-lg bg-red-50 border border-red-200';
+                importResult.innerHTML = `
+                    <h4 class="font-medium text-red-800 mb-2"><i class="fa-solid fa-exclamation-circle mr-2"></i>Import Gagal</h4>
+                    <p class="text-red-700 text-sm">${error.message}</p>
+                `;
+            } finally {
+                importBtn.disabled = false;
+                importBtn.innerHTML = '<i class="fa-solid fa-upload mr-2"></i>Import Data';
+                importResult.classList.remove('hidden');
+            }
+        }
+
+        function clearCSVForm() {
+            document.getElementById('csvFile').value = '';
+            document.getElementById('csvPreview').classList.add('hidden');
+            document.getElementById('importResult').classList.add('hidden');
+            document.getElementById('importBtn').disabled = true;
+            csvData = [];
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Make functions globally available
+        window.handleCSVFile = handleCSVFile;
+        window.importCSV = importCSV;
+        window.clearCSVForm = clearCSVForm;
+    </script>
+</body>
+</html>
